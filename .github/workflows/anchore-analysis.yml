@@ -9,12 +9,12 @@ name: Anchore Container Scan
 on:
   push:
     branches:
-      - main
+      - master
   schedule:
     - cron: '38 19 * * 6'
   workflow_dispatch:
     branches:
-      - main
+      - master
       
 jobs:
   Anchore-Build-Scan:
