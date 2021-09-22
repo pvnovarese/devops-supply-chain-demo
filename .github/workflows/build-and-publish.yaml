@@ -3,10 +3,10 @@ name: Build and Publish Workflow Demo
 on:
   workflow_dispatch:
     branches:
-      - main
+      - master
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build_image:
