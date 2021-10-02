@@ -1,0 +1,53 @@
+# This workflow checks out code, builds an image, performs a container image
+# vulnerability scan with Anchore's Grype tool, and integrates the results with GitHub Advanced Security
+# code scanning feature.  For more information on the Anchore scan action usage
+# and parameters, see https://github.com/anchore/scan-action. For more
+# information on Anchore's container image scanning tool Grype, see
+# https://github.com/anchore/grype
+name: Anchore Container Scan
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '38 19 * * 6'
+  workflow_dispatch:
+    branches:
+      - master
+      
+jobs:
+  Anchore-Build-Scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag localbuild/testimage:latest
+      # --tag ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
+
+# login to ghcr.io
+#      - name: Log in to the Container registry
+#        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+
+# push to scratch repo?   
+#    - name: Run a container command
+#      run: docker run anchore/engine-cli anchore-cli --u myuser --p mypw --url http://127.0.0.1:8228/v1 system status
+# anchore-cli image add
+# image wait
+# evaluate check?
+      
+    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
+      uses: anchore/scan-action@main
+      with:
+        image: "localbuild/testimage:latest"
+        fail-build: false
+        acs-report-enable: true
+    - name: Upload Anchore Scan Report
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: results.sarif
