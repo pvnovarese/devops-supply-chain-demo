@@ -14,7 +14,7 @@ on:
 #    - cron: '38 19 * * 6'
   workflow_dispatch:
     branches:
-      - master
+      - pvnovarese-patch-1
 
 #workflow environment
 env:
