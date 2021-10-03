@@ -31,12 +31,17 @@ jobs:
       run: |
         docker build . --file Dockerfile --tag ${GITHUB_REPOSITORY}:${GITHUB_SHA}
         docker push ${GITHUB_REPOSITORY}:${GITHUB_SHA}
-#    - name: Add to Enterprise Queue
-#      env: 
-#        ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_PASS }}
-#        ANCHORE_CLI_USER: ${{ secrets.ANCHORE_USER }}
-#        ANCHORE_CLI_URL: ${{ secrets.ANCHORE_URL }}
-#      run: echo $ANCHORE_CLI_URL  
+
+  Enterprise-Queue:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Add to Enterprise Queue
+      env: 
+        ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_PASS }}
+        ANCHORE_CLI_USER: ${{ secrets.ANCHORE_USER }}
+        ANCHORE_CLI_URL: ${{ secrets.ANCHORE_URL }}
+      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+
 #      run: docker run anchore/engine-cli anchore-cli --u ${ANCHORE_CLI_USER} --p ${ANCHORE_CLI_PASS} --url ${ANCHORE_CLI_URL} image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 # login to ghcr.io
