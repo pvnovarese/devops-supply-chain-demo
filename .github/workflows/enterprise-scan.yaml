@@ -6,13 +6,13 @@
 # https://github.com/anchore/grype
 name: Anchore Enterprise Test
 
-on:
+on: workflow_dispatch
 #  push:
 #    branches:
 #      - master
 #  schedule:
 #    - cron: '38 19 * * 6'
-  workflow_dispatch
+#  workflow_dispatch:
 #    branches:
 #      - master
 
