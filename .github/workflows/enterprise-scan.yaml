@@ -33,7 +33,13 @@ jobs:
 #      run: docker run anchore/engine-cli anchore-cli --u myuser --p mypw --url http://127.0.0.1:8228/v1 system status
     - name: Push to Docker Hub
       run: docker push ${GITHUB_REPOSITORY}:${GITHUB_SHA}
-
+    - shell: bash
+      env: 
+        - ANCHORE_CLI_PASS: ${{ ANCHORE_PASS }}
+        - ANCHORE_CLI_USER: ${{ ANCHORE_USER }}
+        - ANCHORE_CLI_URL: ${{ ANCHORE_URL }}
+      name: Add to Anchore Enterprise Queue
+      run: docker run anchore/engine-cli anchore-cli image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 # login to ghcr.io
 #      - name: Log in to the Container registry
@@ -50,13 +56,13 @@ jobs:
 # image wait
 # evaluate check?
       
-    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-      uses: anchore/scan-action@main
-      with:
-        image: "${GITHUB_REPOSITORY}:${GITHUB_SHA}"
-        fail-build: false
-        acs-report-enable: true
-    - name: Upload Anchore Scan Report
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: results.sarif
+#    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
+#      uses: anchore/scan-action@main
+#      with:
+#        image: "${GITHUB_REPOSITORY}:${GITHUB_SHA}"
+#        fail-build: false
+#        acs-report-enable: true
+#    - name: Upload Anchore Scan Report
+#      uses: github/codeql-action/upload-sarif@v1
+#      with:
+#        sarif_file: results.sarif
