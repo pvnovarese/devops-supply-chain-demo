@@ -15,7 +15,11 @@ on:
   workflow_dispatch:
     branches:
       - master
-      
+
+#workflow environment
+env:
+  REPO: ${{ github.repository.name }}
+  
 jobs:
   Build-Push:
     runs-on: ubuntu-latest
@@ -27,10 +31,14 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Login to ghcr.io
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
     - name: Build and Push the Docker image
       run: |
-        docker build . --file Dockerfile --tag ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        docker build . --file Dockerfile --tag ${GITHUB_REPOSITORY}:${GITHUB_SHA} --tag ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
         docker push ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        docker push ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA} 
+        # this will need to be fixed if your docker hub and github usernames are different
 
   Enterprise-Queue:
     needs: Build-Push
@@ -46,7 +54,9 @@ jobs:
         echo "ANCHORE_CLI_PASS=${ANCHORE_CLI_PASS}" >> $GITHUB_ENV
         echo "ANCHORE_CLI_URL=${ANCHORE_CLI_URL}" >> $GITHUB_ENV
     - name: Add to Enterprise Queue
-      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+      run: | 
+        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
     - name: Wait for Enterprise Analysis
       run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
@@ -61,17 +71,17 @@ jobs:
 
 # evaluate check?
 
-  Anchore-Scan-Action:
-    needs: Build-Push
-    runs-on: ubuntu-latest
-    steps:
-    - name: Anchore Scan Action with GitHub Advanced Security
-      uses: anchore/scan-action@main
-      with:
-        image: "${GITHUB_REPOSITORY}:${GITHUB_SHA}"
-        fail-build: false
-        acs-report-enable: true
-    - name: Upload Anchore Scan Report
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: results.sarif
+#  Anchore-Scan-Action:
+#    needs: Build-Push
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: Anchore Scan Action with GitHub Advanced Security
+#      uses: anchore/scan-action@main
+#      with:
+#        image: "${GITHUB_REPOSITORY}:${GITHUB_SHA}"
+#        fail-build: false
+#        acs-report-enable: true
+#    - name: Upload Anchore Scan Report
+#      uses: github/codeql-action/upload-sarif@v1
+#      with:
+#        sarif_file: results.sarif
