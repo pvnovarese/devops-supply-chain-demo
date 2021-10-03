@@ -48,7 +48,7 @@ jobs:
     steps:
     - name: Add to Enterprise Queue
       run: | 
-        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL --mount type=bind,source=./Dockerfile,target=/Dockerfile anchore/engine-cli anchore-cli image add --noautosubscribe --dockerfile /Dockerfile ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL --mount type=bind,source=$(pwd)/Dockerfile,target=/Dockerfile anchore/engine-cli anchore-cli image add --noautosubscribe --dockerfile /Dockerfile ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
 #    - name: Wait for Enterprise Analysis
 #      run: |
 #        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
