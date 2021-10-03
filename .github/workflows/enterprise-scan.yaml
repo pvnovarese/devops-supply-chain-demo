@@ -7,16 +7,9 @@
 name: Anchore Enterprise Test
 
 on: 
-  workflow_dispatch:
-    inputs:
-      home:
-        description: 'location'
-        required: false
-        default: 'The Octoverse'
-
-#  push:
-#    branches:
-#      - master
+  push:
+    branches:
+      - master
 #  schedule:
 #    - cron: '38 19 * * 6'
 #  workflow_dispatch:
@@ -52,7 +45,8 @@ jobs:
       run: | 
         docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ${IMAGE}
     - name: Wait for Enterprise Analysis
-      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+      run: |
+        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 
 
