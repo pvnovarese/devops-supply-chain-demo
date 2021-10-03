@@ -43,22 +43,17 @@ jobs:
   Enterprise-Queue:
     needs: Build-Push
     runs-on: ubuntu-latest
+    env:
+      ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
+      ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
+      ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
     steps:
-    - name: Set Environment Variables
-      env:
-        ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
-        ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
-        ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
-      run: |
-        echo "ANCHORE_CLI_USER=${ANCHORE_CLI_USER}" >> $GITHUB_ENV
-        echo "ANCHORE_CLI_PASS=${ANCHORE_CLI_PASS}" >> $GITHUB_ENV
-        echo "ANCHORE_CLI_URL=${ANCHORE_CLI_URL}" >> $GITHUB_ENV
     - name: Add to Enterprise Queue
       run: | 
         docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ${GITHUB_REPOSITORY}:${GITHUB_SHA}
         docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
-    - name: Wait for Enterprise Analysis
-      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+#    - name: Wait for Enterprise Analysis
+#      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 
 # login to ghcr.io
