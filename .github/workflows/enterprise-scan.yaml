@@ -48,7 +48,7 @@ jobs:
     - name: Add to Enterprise Queue
       run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
     - name: Wait for Enterprise Analysis
-      run docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 #      run: docker run anchore/engine-cli anchore-cli --u ${ANCHORE_CLI_USER} --p ${ANCHORE_CLI_PASS} --url ${ANCHORE_CLI_URL} image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
