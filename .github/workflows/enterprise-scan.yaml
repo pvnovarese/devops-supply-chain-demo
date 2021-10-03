@@ -46,11 +46,10 @@ jobs:
         echo "ANCHORE_CLI_PASS=${ANCHORE_CLI_PASS}" >> $GITHUB_ENV
         echo "ANCHORE_CLI_URL=${ANCHORE_CLI_URL}" >> $GITHUB_ENV
     - name: Add to Enterprise Queue
-      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+      run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ${GITHUB_REPOSITORY}:${GITHUB_SHA}
     - name: Wait for Enterprise Analysis
       run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
-#      run: docker run anchore/engine-cli anchore-cli --u ${ANCHORE_CLI_USER} --p ${ANCHORE_CLI_PASS} --url ${ANCHORE_CLI_URL} image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 # login to ghcr.io
 #      - name: Log in to the Container registry
@@ -60,20 +59,18 @@ jobs:
 #          username: ${{ github.actor }}
 #          password: ${{ secrets.GITHUB_TOKEN }}
 
-# push to scratch repo?   
-#    - name: Run a container command
-#      run: docker run anchore/engine-cli anchore-cli --u myuser --p mypw --url http://127.0.0.1:8228/v1 system status
-# anchore-cli image add
-# image wait
 # evaluate check?
-      
-#    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-#      uses: anchore/scan-action@main
-#      with:
-#        image: "${GITHUB_REPOSITORY}:${GITHUB_SHA}"
-#        fail-build: false
-#        acs-report-enable: true
-#    - name: Upload Anchore Scan Report
-#      uses: github/codeql-action/upload-sarif@v1
-#      with:
-#        sarif_file: results.sarif
+
+  Anchore-Scan-Action:
+    needs: Build-Push
+    runs-on: ubuntu-latest
+    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
+      uses: anchore/scan-action@main
+      with:
+        image: "${GITHUB_REPOSITORY}:${GITHUB_SHA}"
+        fail-build: false
+        acs-report-enable: true
+    - name: Upload Anchore Scan Report
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: results.sarif
