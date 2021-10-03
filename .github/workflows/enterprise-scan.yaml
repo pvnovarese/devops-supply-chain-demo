@@ -23,33 +23,38 @@ on:
 jobs:
   Build-Push:
     runs-on: ubuntu-latest
-#    env:
+    env:
+      ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
+      ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
+      ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
 #      IMAGE: ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
     steps:
     - name: Checkout the code
       uses: actions/checkout@v2
     - name: Login to ghcr.io
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
-    - name: Build and Push the Docker image
+    - name: Build Docker image
       run: |
         docker build . --file Dockerfile --tag ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
-        docker push ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
-
-  Enterprise-Queue:
-    needs: Build-Push
-    runs-on: ubuntu-latest
-    env:
-      ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
-      ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
-      ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
-    steps:
+    - name: Push Docker Image
+      run: |
+        docker push ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}      
     - name: Add to Enterprise Queue
       run: | 
-        pwd
-        ls
-        ls -l $(pwd)/Dockerfile
-        DOCKERFILE_PATH=$(pwd)/Dockerfile
-        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL --mount type=bind,source=${DOCKERFILE_PATH},target=/Dockerfile anchore/engine-cli anchore-cli image add --noautosubscribe --dockerfile /Dockerfile ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL --mount type=bind,source=$(pwd)/Dockerfile,target=/Dockerfile anchore/engine-cli anchore-cli image add --noautosubscribe --dockerfile /Dockerfile ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
+
+#  Enterprise-Queue:
+#    needs: Build-Push
+#    runs-on: ubuntu-latest
+#    env:
+#      ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
+#      ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
+#      ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
+#    steps:
+#    - name: Add to Enterprise Queue
+#      run: | 
+#        DOCKERFILE_PATH=$(pwd)/Dockerfile
+#        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL --mount type=bind,source=${DOCKERFILE_PATH},target=/Dockerfile anchore/engine-cli anchore-cli image add --noautosubscribe --dockerfile /Dockerfile ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
 #    - name: Wait for Enterprise Analysis
 #      run: |
 #        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
