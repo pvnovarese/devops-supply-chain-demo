@@ -17,12 +17,14 @@ on:
 #      - master
 
 #workflow environment
-env:
-  IMAGE: ghcr.io/${{ GITHUB_REPOSITORY }}:${{ GITHUB_SHA }}
+#env:
+#  IMAGE: ghcr.io/${{ GITHUB_REPOSITORY }}:${{ GITHUB_SHA }}
   
 jobs:
   Build-Push:
     runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
     steps:
     - name: Checkout the code
       uses: actions/checkout@v2
@@ -37,6 +39,7 @@ jobs:
     needs: Build-Push
     runs-on: ubuntu-latest
     env:
+      IMAGE: ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
       ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
       ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
       ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
