@@ -38,7 +38,7 @@ jobs:
         ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_PASS }}
         ANCHORE_CLI_USER: ${{ secrets.ANCHORE_USER }}
         ANCHORE_CLI_URL: ${{ secrets.ANCHORE_URL }}
-      run: docker run anchore/engine-cli anchore-cli image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+      run: docker run anchore/engine-cli anchore-cli --u ${ANCHORE_CLI_USER} --p ${ANCHORE_CLI_PASS} --url ${ANCHORE_CLI_URL} image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 # login to ghcr.io
 #      - name: Log in to the Container registry
