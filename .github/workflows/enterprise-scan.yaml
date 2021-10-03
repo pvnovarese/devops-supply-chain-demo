@@ -33,6 +33,7 @@ jobs:
         docker push ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
   Enterprise-Queue:
+    needs: Build-Push
     runs-on: ubuntu-latest
     steps:
     - name: Set Environment Variables
