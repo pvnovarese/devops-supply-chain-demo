@@ -39,17 +39,16 @@ jobs:
     needs: Build-Push
     runs-on: ubuntu-latest
     env:
-      IMAGE: ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
       ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
       ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
       ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
     steps:
     - name: Add to Enterprise Queue
       run: | 
-        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ${IMAGE}
+        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add --noautosubscribe ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
     - name: Wait for Enterprise Analysis
       run: |
-        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 
 
