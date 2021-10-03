@@ -64,7 +64,8 @@ jobs:
   Anchore-Scan-Action:
     needs: Build-Push
     runs-on: ubuntu-latest
-    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
+    steps:
+    - name: Anchore Scan Action with GitHub Advanced Security
       uses: anchore/scan-action@main
       with:
         image: "${GITHUB_REPOSITORY}:${GITHUB_SHA}"
