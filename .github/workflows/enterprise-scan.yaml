@@ -17,7 +17,7 @@ on:
       - master
       
 jobs:
-  Anchore-Build-Scan:
+  Build-Push-Queue:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the code
@@ -33,12 +33,12 @@ jobs:
 #      run: docker run anchore/engine-cli anchore-cli --u myuser --p mypw --url http://127.0.0.1:8228/v1 system status
     - name: Push to Docker Hub
       run: docker push ${GITHUB_REPOSITORY}:${GITHUB_SHA}
-    - shell: bash
+    - name: Add to Enterprise Queue
+      shell: bash
       env: 
-        - ANCHORE_CLI_PASS: ${{ ANCHORE_PASS }}
-        - ANCHORE_CLI_USER: ${{ ANCHORE_USER }}
-        - ANCHORE_CLI_URL: ${{ ANCHORE_URL }}
-      name: Add to Anchore Enterprise Queue
+        ANCHORE_CLI_PASS: ${{ ANCHORE_PASS }}
+        ANCHORE_CLI_USER: ${{ ANCHORE_USER }}
+        ANCHORE_CLI_URL: ${{ ANCHORE_URL }}
       run: docker run anchore/engine-cli anchore-cli image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 # login to ghcr.io
