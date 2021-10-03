@@ -12,9 +12,9 @@ on:
 #      - master
 #  schedule:
 #    - cron: '38 19 * * 6'
-  workflow_dispatch:
-    branches:
-      - master
+  workflow_dispatch
+#    branches:
+#      - master
 
 #workflow environment
 env:
