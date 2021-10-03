@@ -24,7 +24,7 @@ jobs:
   Build-Push:
     runs-on: ubuntu-latest
     env:
-      IMAGE: ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
+      IMAGE: ghcr.io/${{ GITHUB_REPOSITORY }}:${{ GITHUB_SHA }}
     steps:
     - name: Checkout the code
       uses: actions/checkout@v2
