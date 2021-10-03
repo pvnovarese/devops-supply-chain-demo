@@ -6,7 +6,8 @@
 # https://github.com/anchore/grype
 name: Anchore Enterprise Test
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
 #  push:
 #    branches:
 #      - master
