@@ -4,14 +4,14 @@
 # and parameters, see https://github.com/anchore/scan-action. For more
 # information on Anchore's container image scanning tool Grype, see
 # https://github.com/anchore/grype
-name: Anchore Container Scan
+name: Anchore Enterprise Test
 
 on:
-  push:
-    branches:
-      - master
-  schedule:
-    - cron: '38 19 * * 6'
+#  push:
+#    branches:
+#      - master
+#  schedule:
+#    - cron: '38 19 * * 6'
   workflow_dispatch:
     branches:
       - master
