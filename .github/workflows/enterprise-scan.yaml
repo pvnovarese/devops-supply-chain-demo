@@ -27,10 +27,10 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${GITHUB_REPOSITORY}:${GITHUB_SHA}
-    - name: Push the Docker image
-      run: docker push ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+    - name: Build and Push the Docker image
+      run: |
+        docker build . --file Dockerfile --tag ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+        docker push ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 #    - name: Add to Enterprise Queue
 #      env: 
 #        ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_PASS }}
