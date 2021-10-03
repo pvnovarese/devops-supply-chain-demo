@@ -35,8 +35,19 @@ jobs:
   Enterprise-Queue:
     runs-on: ubuntu-latest
     steps:
+    - name: Set Environment Variables
+      env:
+        ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
+        ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
+        ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
+      run: |
+        echo "ANCHORE_CLI_USER=${ANCHORE_CLI_USER}" >> $GITHUB_ENV
+        echo "ANCHORE_CLI_PASS=${ANCHORE_CLI_PASS}" >> $GITHUB_ENV
+        echo "ANCHORE_CLI_URL=${ANCHORE_CLI_URL}" >> $GITHUB_ENV
     - name: Add to Enterprise Queue
       run: docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
+    - name: Wait for Enterprise Analysis
+      run docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL anchore/engine-cli anchore-cli image wait ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
 #      run: docker run anchore/engine-cli anchore-cli --u ${ANCHORE_CLI_USER} --p ${ANCHORE_CLI_PASS} --url ${ANCHORE_CLI_URL} image add ${GITHUB_REPOSITORY}:${GITHUB_SHA}
 
