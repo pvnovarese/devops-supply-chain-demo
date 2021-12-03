@@ -38,7 +38,9 @@ jobs:
         docker build . --file Dockerfile --tag ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
     - name: Push Docker Image
       run: |
-        docker push ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}      
+        docker push ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA} 
+    - name: Debug Check
+      run: echo "${pwd}" && ls
     - name: Add to Enterprise Queue
       run: | 
         docker run -e ANCHORE_CLI_USER -e ANCHORE_CLI_PASS -e ANCHORE_CLI_URL --mount type=bind,source=$(pwd)/Dockerfile,target=/Dockerfile anchore/engine-cli anchore-cli image add --noautosubscribe --dockerfile /Dockerfile ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_SHA}
