@@ -7,7 +7,7 @@ pipeline {
     // you need a credential named 'docker-hub' with your DockerID/password to push images
     CREDENTIAL = "docker-hub"
     DOCKER_HUB = credentials("$CREDENTIAL")
-    REPOSITORY = "${DOCKER_HUB_USR}/devops-supply-chain"
+    REPOSITORY = "${DOCKER_HUB_USR}/${JOB_BASE_NAME}"
     TAG = ":devbuild-${BUILD_NUMBER}"
     IMAGELINE = "${REPOSITORY}${TAG} Dockerfile"
   } // end environment 
@@ -56,7 +56,7 @@ pipeline {
     stage('Clean up') {
       // if we succuessfully pushed the :prod tag than we don't need the $BUILD_ID tag anymore
       steps {
-        sh 'docker rmi ${REPOSITORY}${TAG} ${REPOSITORY}:prod'
+        sh 'docker image rm ${REPOSITORY}${TAG} ${REPOSITORY}:prod || failure=1'
       } // end steps
     } // end stage "clean up"
   } // end stages
