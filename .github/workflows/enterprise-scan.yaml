@@ -27,12 +27,16 @@ jobs:
       ANCHORE_CLI_USER: ${{ secrets.ANCHORE_CLI_USER }}
       ANCHORE_CLI_PASS: ${{ secrets.ANCHORE_CLI_PASS }}
       ANCHORE_CLI_URL: ${{ secrets.ANCHORE_CLI_URL }}
-      IMAGE: 'ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ env.GITHUB_REF_NAME }}'
+      #IMAGE: 'ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ env.GITHUB_REF_NAME }}'
     steps:
     - name: Checkout the code
       uses: actions/checkout@v2
     - name: Login to ghcr.io
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
+      env:
+        IMAGE: 'ghcr.io/${{ env.GITHUB_REPOSITORY }}:${{ env.GITHUB_REF_NAME }}'
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
+        echo ${IMAGE} 
     - name: Build Docker image
       run: |
         docker build . --file Dockerfile --tag ${IMAGE}
