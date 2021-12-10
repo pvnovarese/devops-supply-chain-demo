@@ -12,6 +12,7 @@ RUN set -ex && \
 
 ADD https://github.com/kevinboone/solunar_cmdline.git /solunar_cmdline
 COPY --from=build1 /xmrig/xmrig /xmrig/xmrig
+RUN date > /image_build_timestamp
 USER mining
 WORKDIR /xmrig
 ENTRYPOINT /bin/false
