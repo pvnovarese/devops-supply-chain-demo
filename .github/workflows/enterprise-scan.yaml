@@ -9,7 +9,7 @@ name: Anchore Enterprise Test
 on: 
   push:
     branches:
-      - master
+      - main
   schedule:
     - cron: '11 19 * * 6'
   workflow_dispatch:
