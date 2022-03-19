@@ -21,7 +21,6 @@ pipeline {
     stage('Build image and push to registry') {
       steps {
         script {
-          sh "echo 'about to build ${REPOSITORY}'"
           dockerImage = docker.build REPOSITORY + TAG
           docker.withRegistry( '', CREDENTIAL ) { 
             dockerImage.push() 
