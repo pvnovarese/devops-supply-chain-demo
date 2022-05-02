@@ -13,9 +13,10 @@ on:
   schedule:
     - cron: '11 19 * * 6'
   workflow_dispatch:
-    branches:
-      - master
-
+    inputs:
+      mode:
+        description: 'Manual Build'  
+        
 #workflow environment
 #env:
   
