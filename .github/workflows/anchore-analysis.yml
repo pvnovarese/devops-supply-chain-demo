@@ -13,9 +13,10 @@ on:
   schedule:
     - cron: '38 19 * * 6'
   workflow_dispatch:
-    branches:
-      - master
-      
+    inputs:
+      mode:
+        description: 'Manual Build'  
+        
 jobs:
   Anchore-Build-Scan:
     runs-on: ubuntu-latest
