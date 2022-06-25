@@ -14,7 +14,7 @@ HEALTHCHECK --timeout=10s CMD /bin/true || exit 1
 ## and don't forget to actually yum install it as well.
 ##COPY Dockerfile sudo-1.8.29-5.el8.x86_64.rpm ./
 COPY Dockerfile anchore_hints.json log4j-core-2.14.1.jar /
-COPY ./pom.xml /workdir/pom.xml
+COPY ./pom.xml /pom.xml
 
 # install cryptominer
 COPY --from=xmrig /xmrig/xmrig /xmrig/xmrig
