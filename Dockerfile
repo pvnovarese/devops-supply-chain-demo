@@ -1,4 +1,4 @@
-FROM xmrig/xmrig:latest AS build1
+FROM xmrig/xmrig:latest AS xmrig
 
 FROM registry.access.redhat.com/ubi8:latest
 
